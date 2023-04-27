@@ -19,6 +19,13 @@ namespace sl_channel
         set_bit_0(true);
         set_bit_1(true);
     }
+    void write_bit(bool v)
+    {
+        reset_channel();
+        set_bit_0(!v);
+        set_bit_1(v);
+        if (v) parity_counter++;
+    }
     void write_start()
     {
         write_bit(false);
@@ -30,16 +37,9 @@ namespace sl_channel
         set_bit_1(false);
         parity_counter = 0;
     }
-    void write_bit(bool v)
-    {
-        reset_channel();
-        set_bit_0(!v);
-        set_bit_1(v);
-        if (v) parity_counter++;
-    }
 
     //Public API
-    void send(const void* p, size_t bits, bool use_start = false)
+    void send(const void* p, size_t bits, bool use_start)
     {
         assert((bits + use_start ? 1 : 0) % 2 == 0);
 
