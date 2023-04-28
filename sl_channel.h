@@ -8,7 +8,9 @@ namespace sl_channel
     //Implementation-defined
     void set_bit_0(bool v);
     void set_bit_1(bool v);
+    void delay();
 
     //Public API
+    void init();
     void send(const void* p, size_t bits, bool use_start = false);
 } // namespace sl_channel

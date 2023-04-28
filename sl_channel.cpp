@@ -1,6 +1,7 @@
 #include "sl_channel.h"
 
 #include <assert.h>
+#include <cstdio>
 
 #ifndef _BV
     #define _BV(b) (1u << (b))
@@ -18,6 +19,7 @@ namespace sl_channel
     {
         set_bit_0(true);
         set_bit_1(true);
+        delay();
     }
     void write_bit(bool v)
     {
@@ -25,6 +27,7 @@ namespace sl_channel
         set_bit_0(!v);
         set_bit_1(v);
         if (v) parity_counter++;
+        delay();
     }
     void write_start()
     {
@@ -36,12 +39,22 @@ namespace sl_channel
         set_bit_0(false);
         set_bit_1(false);
         parity_counter = 0;
+        delay();
+        reset_channel();
     }
 
     //Public API
+    void init()
+    {
+        reset_channel();
+    }
     void send(const void* p, size_t bits, bool use_start)
     {
-        assert((bits + use_start ? 1 : 0) % 2 == 0);
+        size_t total_bits = bits + (use_start ? 1 : 0);
+        if (total_bits % 2 != 0)
+        {
+            printf("SL Channel WARNING: total number of bits is not even (%u).\n", total_bits);
+        }
 
         const uint8_t* buf = reinterpret_cast<const uint8_t*>(p);
         size_t bytes = bits / __CHAR_BIT__;
