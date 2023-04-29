@@ -3,6 +3,8 @@
 #include <assert.h>
 #include <cstdio>
 
+#define DISABLE_CHANNEL_SET_DELAY 1 //Useful when open-drain signaling is used (rising edge is slower than falling one)
+
 #ifndef _BV
     #define _BV(b) (1u << (b))
 #endif
@@ -27,7 +29,9 @@ namespace sl_channel
         set_bit_0(!v);
         set_bit_1(v);
         if (v) parity_counter++;
+#if !DISABLE_CHANNEL_SET_DELAY
         delay();
+#endif
     }
     void write_start()
     {
